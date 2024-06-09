@@ -1,0 +1,15 @@
+openai
+openai-whisper
+python-dotenv
+pvporcupine
+pvrhino
+numpy
+transformers
+pyaudio
+torch
+torchvision
+torchaudio
+opencv-python
+pyttsx3
+requests
+websockets
