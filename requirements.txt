@@ -4,6 +4,8 @@ python-dotenv
 pvporcupine
 pvrhino
 numpy
+datasets
+speech_recognition
 transformers
 pyaudio
 torch
@@ -11,5 +13,6 @@ torchvision
 torchaudio
 opencv-python
 pyttsx3
+py3-tts
 requests
 websockets

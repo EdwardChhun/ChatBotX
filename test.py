@@ -1,25 +1,12 @@
-from datasets import load_dataset
-from transformers import WhisperProcessor, WhisperForConditionalGeneration
+query = "I want you to pick up a bottle from the table"
 
-# Select an audio file and read it:
-ds = load_dataset("hf-internal-testing/librispeech_asr_dummy", "clean", split="validation")
-audio_sample = ds[0]["audio"]
-waveform = audio_sample["array"]
-sampling_rate = audio_sample["sampling_rate"]
+# Partition the string at "pick up"
+before, sep, after = query.partition("pick up")
 
-# Load the Whisper model in Hugging Face format:
-processor = WhisperProcessor.from_pretrained("openai/whisper-tiny.en")
-model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-tiny.en")
+# If the separator is found, 'after' will contain the desired part
+if sep:  # sep is "pick up" if found, empty otherwise
+    item = after.strip()  # Strip leading/trailing spaces
+else:
+    item = None  # If "pick up" is not found
 
-# Use the model and processor to transcribe the audio:
-input_features = processor(
-    waveform, sampling_rate=sampling_rate, return_tensors="pt"
-).input_features
-
-# Generate token ids
-predicted_ids = model.generate(input_features)
-
-# Decode token ids to text
-transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)
-
-transcription[0]
+print("Item:", item)  # Output: "a bottle"
