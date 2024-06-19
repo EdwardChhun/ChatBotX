@@ -5,7 +5,7 @@ pvporcupine
 pvrhino
 numpy
 datasets
-speech_recognition
+speechrecognition
 transformers
 pyaudio
 torch

@@ -12,22 +12,23 @@ import datetime
 import speech_recognition as sr
 import wikipedia
 import webbrowser
+import requests
 
 # Initialize the recognizer
 r = sr.Recognizer()
 
 # Initialize the TTS engine
 try:
-    engine = pyttsx3.init('nsss') # This is MACOS, use another argument for Windows "SAPI5"
+    engine = pyttsx3.init() # This is MACOS, use another argument for Windows "SAPI5"
 except Exception as e:
     print("Error initializing pyttsx3:", e)
     exit(1)
     
 def speak(audio: str) -> None:
     """Convert text to speech."""
+    print("🤖: ", audio)
     engine.say(audio)
     engine.runAndWait()
-    print("🤖: ", audio)
 
 def wishme() -> None:
     """Greet the user based on the current time."""
@@ -44,18 +45,23 @@ def takecommand() -> str:
     """Listen for a command from the user and return it as a string."""
     with sr.Microphone() as source:
         print("Listening.....")
+        r.adjust_for_ambient_noise(source)
         r.pause_threshold = 1
         audio = r.listen(source)
     try:
         print("Wait for a few moments")
         query = r.recognize_google(audio, language="en-in")
-        print("User said:", query)
+        print("🗣️:", query)
         return query
-    except Exception as e:
-        print(e)
+    except sr.UnknownValueError:6
+        print("Could not understand the audio")
         speak("Say that again, please.")
         return None
-    
+    except sr.RequestError as e:
+        print(f"Could not request results from Google Speech Recognition service; {e}")
+        speak("There was an error connecting to the speech service.")
+        return None
+
 def sendItemToCamera(item: str) -> None:
     """ 
     Parameters:
@@ -77,13 +83,20 @@ if __name__ == "__main__":
                 """
                 before, sep, after = query.partition("pick up")
                 
-                if after == "my":                   # This is just for tts to reply properly
+                if "my" in query:                   # This is just for tts to reply properly
                     query.replace("my", "your")     # Picking up "your" item instead of "my" item
                 if sep:
                     item = after.strip()
                     speak(f"Picking up {item}")
                 else:
                     print("Please say a valid item")
+            
+            elif "weather" and "sacramento" in query:
+                """ 
+                HACK: Include WeatherAPI call
+                """
+                speak("The weather in Sacramento is looking forward to a fucking hot day")
+                
 
             elif "wikipedia" in query:
                 speak("Searching in Wikipedia")
